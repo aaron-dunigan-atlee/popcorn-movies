@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Popcorn Movies</string>
-    <!-- Reviewer or GitHub cloner: uncomment this line and add your API key. -->
+
+    <!-- Udacity reviewer or GitHub cloner: uncomment the following line and add your API key. -->
     <!--<string name="themoviedb_api_key">[Insert your themoviedb.org API key here.]</string>-->
+
     <string name="movie_poster_content_description">Movie Poster</string>
     <string name="tmdb_base_url">http://api.themoviedb.org/3/movie</string>
+
 
 
 </resources>
