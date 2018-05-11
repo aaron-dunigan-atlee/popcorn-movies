@@ -1,6 +1,7 @@
 package com.example.android.popcornmovies;
 
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import com.example.android.popcornmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.net.URL;
 
 
@@ -31,5 +33,31 @@ public class MainActivity extends AppCompatActivity {
         String sortOrder = "popular";
         URL tmdbUrl = NetworkUtils.buildUrl(this, sortOrder, themoviedbApiKey);
         captionTextView.setText(tmdbUrl.toString());
+        MovieDbQueryTask fetchMoviesTask = new MovieDbQueryTask();
+        fetchMoviesTask.execute(tmdbUrl);
+    }
+
+    public class MovieDbQueryTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            String movieQueryJson = null;
+            try {
+                movieQueryJson = NetworkUtils.getResponseFromHttpUrl(urls[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return movieQueryJson;
+        }
+
+        @Override
+        protected void onPostExecute(String queryResult) {
+            super.onPostExecute(queryResult);
+            if (queryResult != null) {
+                messageTextView = findViewById(R.id.mesage_tv);
+                messageTextView.setText(queryResult);
+            }
+            return;
+        }
     }
 }
