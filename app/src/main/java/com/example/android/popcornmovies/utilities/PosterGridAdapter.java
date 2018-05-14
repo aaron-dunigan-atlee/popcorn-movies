@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 
 /**
  * Created by Dunigan AtLee on 5/11/2018.
+ * RecyclerView Adapter for the grid of movie posters in Main Activity.
  */
 
 public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.PosterGridAdapterViewHolder> {
