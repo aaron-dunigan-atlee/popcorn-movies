@@ -17,17 +17,27 @@ import com.squareup.picasso.Picasso;
  */
 
 public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.PosterGridAdapterViewHolder> {
+    final private OnClickHandler posterClickHandler;
     public Context adapterContext;
-    public PosterGridAdapter(Context context) {
+    public PosterGridAdapter(Context context, OnClickHandler clickHandler) {
         adapterContext = context;
+        posterClickHandler = clickHandler;
     }
     // Create a ViewHolder
-    public class PosterGridAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class PosterGridAdapterViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
         public final ImageView posterImageView;
 
         public PosterGridAdapterViewHolder(View view) {
             super(view);
             posterImageView = (ImageView) view.findViewById(R.id.movie_poster_iv);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            posterClickHandler.onItemClicked(adapterPosition);
         }
     }
 
@@ -55,4 +65,7 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
         return 20;
     }
 
+    public interface OnClickHandler {
+        void onItemClicked(int position);
+    }
 }

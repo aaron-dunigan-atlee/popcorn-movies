@@ -21,6 +21,7 @@ public class NetworkUtils {
     static final String PARAM_KEY = "api_key";
     // Form a URL for making the api call.
     // The basic structure of this is modeled from T02.06-Exercise-AddPolish.
+    // URL will look like
     public static URL buildUrl(Context context, String sortOrder, String apiKey) {
         String baseUrl = context.getString(R.string.tmdb_base_url);
         Uri tmdbUri = Uri.parse(baseUrl).buildUpon()
