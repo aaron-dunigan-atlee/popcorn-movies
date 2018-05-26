@@ -1,14 +1,11 @@
 package com.example.android.popcornmovies;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.popcornmovies.utilities.NetworkUtils;
@@ -74,6 +71,7 @@ public class MainActivity
                 messageTextView = findViewById(R.id.mesage_tv);
                 messageTextView.setText(queryResult);
             }*/
+            gridAdapter.setPosterUrls(queryResult);
             return;
         }
     }

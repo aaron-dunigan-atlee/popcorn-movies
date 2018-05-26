@@ -3,6 +3,7 @@ package com.example.android.popcornmovies.utilities;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,17 @@ import android.widget.ImageView;
 import com.example.android.popcornmovies.R;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+
 /**
  * Created by Dunigan AtLee on 5/11/2018.
  * RecyclerView Adapter for the grid of movie posters in Main Activity.
  */
 
 public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.PosterGridAdapterViewHolder> {
-    final private OnClickHandler posterClickHandler;
+    private static int itemCount = 20;
+    private OnClickHandler posterClickHandler;
+    private String[] posterUrls = new String[itemCount];
     public Context adapterContext;
     public PosterGridAdapter(Context context, OnClickHandler clickHandler) {
         adapterContext = context;
@@ -54,18 +59,44 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
 
     @Override
     public void onBindViewHolder(PosterGridAdapterViewHolder holder, int position) {
-        // Load poster image into posterImageView which was initialized in the ViewHolder constructor.
+        if (position < posterUrls.length) {
+            if (posterUrls[position] != null) {
+                // Load poster image into posterImageView which was initialized in the ViewHolder constructor.
+                Picasso.with(adapterContext)
+                        .load(posterUrls[position])
+                        .into(holder.posterImageView);
+                return;
+            }
+        }
+        // Else load placeholder image.
         Picasso.with(adapterContext)
-                .load("http://image.tmdb.org/t/p/w185/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg")
+                .load(R.drawable.ic_amish_aaron)
                 .into(holder.posterImageView);
     }
 
     @Override
     public int getItemCount() {
-        return 20;
+        return itemCount;
+    }
+
+    public static void setItemCount(int itemCount) {
+        PosterGridAdapter.itemCount = itemCount;
     }
 
     public interface OnClickHandler {
         void onItemClicked(int position);
+    }
+
+    /* From the TMDB query JSON, extract poster URLs and display all posters in the grid. */
+    public void setPosterUrls(String json) {
+        for (int i=0; i<itemCount; i++) {
+            try {
+                String movieJson = JsonUtils.getMovieJson(json, i);
+                posterUrls[i] = JsonUtils.buildPosterUrl(movieJson);
+            } catch(JSONException e) {
+                Log.e("Json Error","e");
+            }
+        }
+        notifyDataSetChanged();
     }
 }
