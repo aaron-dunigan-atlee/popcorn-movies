@@ -22,6 +22,7 @@ public class MainActivity
     private TextView captionTextView, messageTextView;
     private RecyclerView.LayoutManager posterGridLayoutManager;
     private PosterGridAdapter gridAdapter;
+    private String mMovieQueryResult = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class MainActivity
 
     @Override
     public void onItemClicked(int position) {
-        launchDetailActivity(position);
+        launchDetailActivity(position, mMovieQueryResult);
     }
 
     public class MovieDbQueryTask extends AsyncTask<URL, Void, String> {
@@ -71,16 +72,18 @@ public class MainActivity
                 messageTextView = findViewById(R.id.mesage_tv);
                 messageTextView.setText(queryResult);
             }*/
+            mMovieQueryResult = queryResult;
             gridAdapter.setPosterUrls(queryResult);
             return;
         }
     }
 
-    private void launchDetailActivity(int position) {
+    private void launchDetailActivity(int position, String tmdb_query_json) {
         // Create intent for detail activitiy.
         Intent detailActivityIntent = new Intent(this,DetailActivity.class);
         // Add position as an extra to the intent, so that we know which movie's details to get.
         detailActivityIntent.putExtra(DetailActivity.EXTRA_POSITION, position);
+        detailActivityIntent.putExtra(DetailActivity.EXTRA_QUERY_JSON, tmdb_query_json);
         // Launch activity
         startActivity(detailActivityIntent);
     }

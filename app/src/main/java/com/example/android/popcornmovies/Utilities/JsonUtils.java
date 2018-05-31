@@ -17,7 +17,7 @@ public class JsonUtils {
         movie.setRating(ratingFloat);
         movie.setReleaseDate(movieJsonObj.getString("release_date"));
         movie.setSynopsis(movieJsonObj.getString("overview"));
-        movie.setPosterUrl(movieJsonObj.getString("poster_path"));
+        movie.setPosterUrl("http://image.tmdb.org/t/p/w185" + movieJsonObj.getString("poster_path"));
         return movie;
     }
 
