@@ -24,7 +24,6 @@ public class MainActivity
         extends AppCompatActivity
         implements PosterGridAdapter.OnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener{
 
-    private TextView captionTextView, messageTextView;
     private RecyclerView.LayoutManager posterGridLayoutManager;
     private PosterGridAdapter gridAdapter;
     private String mMovieQueryResult = null;
@@ -109,7 +108,6 @@ public class MainActivity
             }*/
             mMovieQueryResult = queryResult;
             gridAdapter.setPosterUrls(queryResult);
-            return;
         }
     }
 
