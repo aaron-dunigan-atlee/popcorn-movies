@@ -102,10 +102,6 @@ public class MainActivity
         @Override
         protected void onPostExecute(String queryResult) {
             super.onPostExecute(queryResult);
-            /*if (queryResult != null) {
-                messageTextView = findViewById(R.id.mesage_tv);
-                messageTextView.setText(queryResult);
-            }*/
             mMovieQueryResult = queryResult;
             gridAdapter.setPosterUrls(queryResult);
         }
