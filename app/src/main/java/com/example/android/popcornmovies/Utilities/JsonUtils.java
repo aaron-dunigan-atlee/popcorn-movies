@@ -12,6 +12,7 @@ public class JsonUtils {
     public static Movie parseMovieJson(String movieJson) throws JSONException {
         Movie movie = new Movie();
         JSONObject movieJsonObj = new JSONObject(movieJson);
+        movie.setTitle(movieJsonObj.getString("title"));
         String ratingString = movieJsonObj.getString("vote_average");
         float ratingFloat = Float.parseFloat(ratingString);
         movie.setRating(ratingFloat);
