@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="order_preference_labels">
+        <item>@string/order_preference_popular_label</item>
+        <item>@string/order_preference_rating_label</item>
+    </array>
+    <array name="order_preference_values">
+        <item>@string/order_preference_popular_value</item>
+        <item>@string/order_preference_rating_value</item>
+    </array>
+
+</resources>

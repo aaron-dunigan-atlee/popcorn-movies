@@ -14,4 +14,12 @@
     <string name="release_date_label">Release date:</string>
     <string name="title">Movie Title</string>
     <string name="synopsis">Move synopsis here.</string>
+    <string name="settings_menu_label">Settings</string>
+    <string name="order_preference_title">Order by</string>
+    <string name="order_preference_popular_value">popular</string>
+    <string name="order_preference_key">order</string>
+    <string name="order_preference_popular_label">Popularity</string>
+    <string name="order_preference_rating_label">Rating</string>
+    <string name="order_preference_rating_value">top_rated</string>
+    <string name="order_preference_default">popular</string>
 </resources>
