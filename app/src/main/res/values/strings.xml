@@ -20,4 +20,8 @@
     <string name="order_preference_rating_label">Rating</string>
     <string name="order_preference_rating_value">top_rated</string>
     <string name="order_preference_default">popular</string>
+    <string name="order_preference_favorite_label">My Favorites</string>
+    <string name="order_preference_favorite_value">favorite</string>
+    <string name="trailer_label">Play Trailer</string>
+    <string name="play_trailer_content_description">Play trailer</string>
 </resources>

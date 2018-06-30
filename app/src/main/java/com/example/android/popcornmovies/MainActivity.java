@@ -11,8 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.android.popcornmovies.database.AppDatabase;
 import com.example.android.popcornmovies.utilities.NetworkUtils;
 import com.example.android.popcornmovies.utilities.PosterGridAdapter;
 
@@ -27,8 +28,9 @@ public class MainActivity
     private RecyclerView.LayoutManager posterGridLayoutManager;
     private PosterGridAdapter gridAdapter;
     private String mMovieQueryResult = null;
-    private String sortOrder, themoviedbApiKey;
-
+    private String sortOrder;
+    private static String themoviedbApiKey;
+    private AppDatabase mDb;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,12 +65,17 @@ public class MainActivity
         // Reviewer or GitHub cloner: Add your API key in strings.xml with name themoviedb_api_key.
         themoviedbApiKey = getString(R.string.themoviedb_api_key);
         fetchMovies();
+        mDb = AppDatabase.getInstance(getApplicationContext());
     }
 
     private void fetchMovies() {
-        URL tmdbUrl = NetworkUtils.buildUrl(this, sortOrder, themoviedbApiKey);
-        MovieDbQueryTask fetchMoviesTask = new MovieDbQueryTask();
-        fetchMoviesTask.execute(tmdbUrl);
+        if (NetworkUtils.deviceIsConnected(this)) {
+            URL tmdbUrl = NetworkUtils.buildMovieQueryUrl(this, sortOrder, themoviedbApiKey);
+            MovieDbMovieQueryTask fetchMoviesTask = new MovieDbMovieQueryTask();
+            fetchMoviesTask.execute(tmdbUrl);
+        } else {
+            Toast.makeText(this, "No network connection", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -86,17 +93,17 @@ public class MainActivity
         }
     }
 
-    public class MovieDbQueryTask extends AsyncTask<URL, Void, String> {
+    public class MovieDbMovieQueryTask extends AsyncTask<URL, Void, String> {
 
         @Override
         protected String doInBackground(URL... urls) {
-            String movieQueryJson = null;
+            String result = null;
             try {
-                movieQueryJson = NetworkUtils.getResponseFromHttpUrl(urls[0]);
+                result = NetworkUtils.getResponseFromHttpUrl(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return movieQueryJson;
+            return result;
         }
 
         @Override
@@ -106,6 +113,7 @@ public class MainActivity
             gridAdapter.setPosterUrls(queryResult);
         }
     }
+
 
     private void launchDetailActivity(int position, String tmdb_query_json) {
         // Create intent for detail activitiy.
@@ -135,12 +143,7 @@ public class MainActivity
         super.onDestroy();
     }
 
-    public String getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(String sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
+    public String getSortOrder() { return sortOrder; }
+    public void setSortOrder(String sortOrder) { this.sortOrder = sortOrder; }
+    public static String getThemoviedbApiKey() { return themoviedbApiKey; }
 }

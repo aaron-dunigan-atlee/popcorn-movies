@@ -13,6 +13,7 @@ public class JsonUtils {
         if (movieJson != null) {
             Movie movie = new Movie();
             JSONObject movieJsonObj = new JSONObject(movieJson);
+            movie.setId(movieJsonObj.getInt("id"));
             movie.setTitle(movieJsonObj.getString("title"));
             String ratingString = movieJsonObj.getString("vote_average");
             float ratingFloat = Float.parseFloat(ratingString);
@@ -20,6 +21,7 @@ public class JsonUtils {
             movie.setReleaseDate(movieJsonObj.getString("release_date"));
             movie.setSynopsis(movieJsonObj.getString("overview"));
             movie.setPosterUrl("http://image.tmdb.org/t/p/w185" + movieJsonObj.getString("poster_path"));
+
             return movie;
         } else {
             throw new JSONException("No JSON was retrieved. Check Internet connection.");
@@ -42,6 +44,14 @@ public class JsonUtils {
         JSONObject movieJsonObj = new JSONObject(movieJson);
         String posterPath = movieJsonObj.getString("poster_path");
         return "http://image.tmdb.org/t/p/w185" + posterPath;
+    }
+
+    /* Extract trailer youtube key from trailer query result. */
+    public static String getTrailerYoutubeKey(String trailerQueryJson) throws JSONException {
+        JSONObject trailersJsonObj = new JSONObject(trailerQueryJson);
+        JSONArray videosArray = trailersJsonObj.getJSONArray("results");
+        JSONObject videoJsonObj = videosArray.getJSONObject(0);
+        return videoJsonObj.getString("key");
     }
 }
 
