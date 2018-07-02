@@ -58,6 +58,24 @@ public class NetworkUtils {
         return tmdbUrl;
     }
 
+    // Form a URL for making the api call to get a trailer for a given movie.
+    // The basic structure of this is modeled from T02.06-Exercise-AddPolish.
+    public static URL buildReviewQueryUrl(Context context, int movieId, String apiKey) {
+        String baseUrl = context.getString(R.string.tmdb_base_url);
+        Uri tmdbUri = Uri.parse(baseUrl).buildUpon()
+                .appendPath(Integer.toString(movieId))
+                .appendPath("reviews")
+                .appendQueryParameter(PARAM_KEY, apiKey)
+                .build();
+        URL tmdbUrl = null;
+        try {
+            tmdbUrl = new URL(tmdbUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return tmdbUrl;
+    }
+
     // Form a URL for getting a youtube video.
     public static Uri buildYoutubeUri(String videoKey) {
         String baseUrl = "https://www.youtube.com";

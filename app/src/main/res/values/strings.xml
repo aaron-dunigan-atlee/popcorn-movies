@@ -22,6 +22,11 @@
     <string name="order_preference_default">popular</string>
     <string name="order_preference_favorite_label">My Favorites</string>
     <string name="order_preference_favorite_value">favorite</string>
-    <string name="trailer_label">Play Trailer</string>
+    <string name="trailer_label">Play trailer</string>
     <string name="play_trailer_content_description">Play trailer</string>
+    <string name="reviews_button_label">Read reviews</string>
+    <string name="author_label">Author:</string>
+    <string name="author">A. U. Thor</string>
+    <string name="review">Movie review here.</string>
+    <string name="reviews">Reviews</string>
 </resources>

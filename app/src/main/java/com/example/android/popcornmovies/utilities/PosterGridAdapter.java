@@ -94,7 +94,7 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
                 String movieJson = JsonUtils.getMovieJson(json, i);
                 posterUrls[i] = JsonUtils.buildPosterUrl(movieJson);
             } catch (JSONException e) {
-                Log.e("Json Error","e");
+                Log.e("Json Error",e.toString());
             }
         }
         notifyDataSetChanged();

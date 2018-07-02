@@ -53,5 +53,27 @@ public class JsonUtils {
         JSONObject videoJsonObj = videosArray.getJSONObject(0);
         return videoJsonObj.getString("key");
     }
+
+    public static String getReviewJson(String reviewsJson, int index) throws JSONException {
+        JSONObject reviewsJsonObj = new JSONObject(reviewsJson);
+        JSONArray reviewsArray = reviewsJsonObj.getJSONArray("results");
+        JSONObject singleReviewJsonObject = reviewsArray.getJSONObject(index);
+        return singleReviewJsonObject.toString();
+    }
+
+    public static String getAuthor(String reviewJson) throws JSONException {
+        JSONObject reviewJsonObj = new JSONObject(reviewJson);
+        return reviewJsonObj.getString("author");
+    }
+
+    public static String getReview(String reviewJson) throws JSONException {
+        JSONObject reviewJsonObj = new JSONObject(reviewJson);
+        return reviewJsonObj.getString("content");
+    }
+
+    public static int getReviewCount(String reviewsJson) throws JSONException {
+        JSONObject reviewsJsonObj = new JSONObject(reviewsJson);
+        return reviewsJsonObj.getInt("total_results");
+    }
 }
 

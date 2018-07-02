@@ -30,7 +30,6 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_QUERY_JSON = "extra_query_json";
     private TextView mTitleTextView, mSynopsisTextView, mRatingTextView, mReleaseDateTextView;
     private ImageView mPosterImageView;
-    private String mTrailerQueryResult = null;
     private Movie mMovie;
     private String movieTrailerYoutubeKey = null;
 
@@ -58,9 +57,16 @@ public class DetailActivity extends AppCompatActivity {
                 playTrailer();
             }
         });
+        final Button reviewsButton = findViewById(R.id.reviews_button);
+        reviewsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                launchReviewsActivity();
+            }
+        });
+
     }
 
-    private void fetchTrailers() {
+    private void playTrailer() {
         if (NetworkUtils.deviceIsConnected(this)) {
             URL tmdbUrl = NetworkUtils.buildTrailerQueryUrl(this, mMovie.getId(),
                     MainActivity.getThemoviedbApiKey());
@@ -71,6 +77,8 @@ public class DetailActivity extends AppCompatActivity {
             Toast.makeText(this, "No network connection", Toast.LENGTH_LONG).show();
         }
     }
+
+
 
     private void populateUI(Movie movie) {
         mTitleTextView = findViewById(R.id.title_tv);
@@ -83,11 +91,6 @@ public class DetailActivity extends AppCompatActivity {
         mReleaseDateTextView.setText(movie.getReleaseDate());
 
     }
-
-    private void playTrailer() {
-        fetchTrailers();
-    }
-
 
     public class MovieDbTrailerQueryTask extends AsyncTask<URL, Void, String> {
         @Override
@@ -103,20 +106,33 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String queryResult) {
             super.onPostExecute(queryResult);
-            mTrailerQueryResult = queryResult;
-            Log.d("Trailer query:",queryResult);
-            try {
-                movieTrailerYoutubeKey = JsonUtils.getTrailerYoutubeKey(queryResult);
-            } catch (JSONException e) {
-                Log.e("JSON error:",e.toString());
+            Log.d("Trailer query result:",queryResult);
+            if (queryResult != null) {
+                try {
+                    movieTrailerYoutubeKey = JsonUtils.getTrailerYoutubeKey(queryResult);
+                } catch (JSONException e) {
+                    Log.e("JSON error:", e.toString());
+                }
             }
             if (movieTrailerYoutubeKey != null) {
                 Uri youtubeUri = NetworkUtils.buildYoutubeUri(movieTrailerYoutubeKey);
                 Log.d("YoutubeURI:",youtubeUri.toString());
                 startActivity(new Intent(Intent.ACTION_VIEW, youtubeUri));
             } else {
-
+                Toast.makeText(getApplicationContext(),"Cannot play trailer",Toast.LENGTH_LONG).show();
             }
         }
     }
+    private void launchReviewsActivity() {
+        int movieId = mMovie.getId();
+        String movieTitle = mMovie.getTitle();
+        // Create intent for review activity.
+        Intent reviewsActivityIntent = new Intent(this,ReviewsActivity.class);
+        // Add position as an extra to the intent, so that we know which movie's details to get.
+        reviewsActivityIntent.putExtra(ReviewsActivity.EXTRA_MOVIE_ID, movieId);
+        reviewsActivityIntent.putExtra(ReviewsActivity.EXTRA_MOVIE_TITLE, movieTitle);
+        // Launch activity
+        startActivity(reviewsActivityIntent);
+    }
+
 }
