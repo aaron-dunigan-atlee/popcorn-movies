@@ -49,7 +49,7 @@ public class DetailActivity extends AppCompatActivity {
                     .into(mPosterImageView);
             populateUI(mMovie);
         } catch(JSONException e) {
-            Log.e("JSON error:",e.toString());
+            Log.e("JSON error",e.toString());
         }
         final ImageButton trailerButton = findViewById(R.id.play_trailer_button);
         trailerButton.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +70,7 @@ public class DetailActivity extends AppCompatActivity {
         if (NetworkUtils.deviceIsConnected(this)) {
             URL tmdbUrl = NetworkUtils.buildTrailerQueryUrl(this, mMovie.getId(),
                     MainActivity.getThemoviedbApiKey());
-            Log.d("Query URL:",tmdbUrl.toString());
+            Log.d("Query URL",tmdbUrl.toString());
             MovieDbTrailerQueryTask fetchTrailersTask = new MovieDbTrailerQueryTask();
             fetchTrailersTask.execute(tmdbUrl);
         } else {
@@ -106,17 +106,17 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String queryResult) {
             super.onPostExecute(queryResult);
-            Log.d("Trailer query result:",queryResult);
+            Log.d("Trailer query result",queryResult);
             if (queryResult != null) {
                 try {
                     movieTrailerYoutubeKey = JsonUtils.getTrailerYoutubeKey(queryResult);
                 } catch (JSONException e) {
-                    Log.e("JSON error:", e.toString());
+                    Log.e("JSON error", e.toString());
                 }
             }
             if (movieTrailerYoutubeKey != null) {
                 Uri youtubeUri = NetworkUtils.buildYoutubeUri(movieTrailerYoutubeKey);
-                Log.d("YoutubeURI:",youtubeUri.toString());
+                Log.d("YoutubeURI",youtubeUri.toString());
                 startActivity(new Intent(Intent.ACTION_VIEW, youtubeUri));
             } else {
                 Toast.makeText(getApplicationContext(),"Cannot play trailer",Toast.LENGTH_LONG).show();

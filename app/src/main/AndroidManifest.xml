@@ -23,6 +23,7 @@
         </activity>
         <activity
             android:name=".DetailActivity"
+            android:launchMode="singleTop"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -38,6 +39,7 @@
         <activity
             android:name=".ReviewsActivity"
             android:parentActivityName=".DetailActivity">
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DetailActivity" />
