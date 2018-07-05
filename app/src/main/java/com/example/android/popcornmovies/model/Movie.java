@@ -15,9 +15,11 @@ public class Movie {
     private float rating;
     private String posterUrl;
     private String videoKey;
+    private boolean isFavorite = false;
 
     @Ignore
-    public Movie() {}
+    public Movie() {
+    }
 
     public Movie(int id, String title, String synopsis, String releaseDate, float rating, String posterUrl) {
         this.id = id;
@@ -44,6 +46,9 @@ public class Movie {
         return posterUrl;
     }
     public String getVideoKey() { return videoKey; }
+    public boolean isFavorite() {
+        return isFavorite;
+    }
 
     public void setId(int id) { this.id = id; }
     public void setTitle(String title) {
@@ -62,4 +67,5 @@ public class Movie {
         this.posterUrl = posterUrl;
     }
     public void setVideoKey(String videoKey) {this.videoKey = videoKey; }
+    public void setFavorite(boolean favorite) { isFavorite = favorite; }
 }

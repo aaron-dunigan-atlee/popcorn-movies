@@ -1,8 +1,12 @@
 package com.example.android.popcornmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.popcornmovies.database.AppDatabase;
 import com.example.android.popcornmovies.model.Movie;
 import com.example.android.popcornmovies.utilities.JsonUtils;
 import com.example.android.popcornmovies.utilities.NetworkUtils;
@@ -32,6 +37,8 @@ public class DetailActivity extends AppCompatActivity {
     private ImageView mPosterImageView;
     private Movie mMovie;
     private String movieTrailerYoutubeKey = null;
+    private AppDatabase favoritesDb;
+    private ImageButton favoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +47,12 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int position = intent.getIntExtra(EXTRA_POSITION, DEFAULT_POSITION);
         String queryResult = intent.getStringExtra(EXTRA_QUERY_JSON);
+        favoritesDb = AppDatabase.getInstance(getApplicationContext());
+
         try {
             String movieJson = JsonUtils.getMovieJson(queryResult, position);
             mMovie = JsonUtils.parseMovieJson(movieJson);
+            setTitle(mMovie.getTitle());
             mPosterImageView = findViewById(R.id.detail_poster_iv);
             Picasso.with(this)
                     .load(mMovie.getPosterUrl())
@@ -63,6 +73,14 @@ public class DetailActivity extends AppCompatActivity {
                 launchReviewsActivity();
             }
         });
+        favoriteButton = findViewById(R.id.favorite_button);
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                toggleFavorite();
+            }
+        });
+        setupViewModel();
+
 
     }
 
@@ -123,6 +141,8 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
     }
+
+    // Launch the ReviewsActivity to show reviews for the current movie.
     private void launchReviewsActivity() {
         int movieId = mMovie.getId();
         String movieTitle = mMovie.getTitle();
@@ -135,4 +155,53 @@ public class DetailActivity extends AppCompatActivity {
         startActivity(reviewsActivityIntent);
     }
 
+    // Toggle the current movie as a favorite.
+    // Star button image will be updated automatically because of the ViewModel observer.
+    private void toggleFavorite() {
+        if (mMovie.isFavorite()) {
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    favoritesDb.favoriteMovieDao().deleteFavoriteMovie(mMovie);
+                }
+            });
+            mMovie.setFavorite(false);
+            setFavoriteButtonImage(false);
+        } else {
+            mMovie.setFavorite(true);
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    favoritesDb.favoriteMovieDao().insertFavoriteMovie(mMovie);
+                }
+            });
+            setFavoriteButtonImage(true);
+        }
+    }
+
+    // Set up ViewModel to observe when this movie is toggled as a favorite.
+    private void setupViewModel() {
+        RetrieveFavoriteViewModelFactory factory = new RetrieveFavoriteViewModelFactory(favoritesDb,mMovie.getId());
+        final RetrieveFavoriteViewModel viewModel = ViewModelProviders.of(this, factory).get(RetrieveFavoriteViewModel.class);
+        viewModel.getMovie().observe(this, new Observer<Movie>() {
+            @Override
+            public void onChanged(@Nullable Movie movie) {
+                if (movie != null) {
+                    // Update member variable and UI to reflect database status.
+                    mMovie.setFavorite(movie.isFavorite());
+                    setFavoriteButtonImage(movie.isFavorite());
+                }
+            }
+        });
+    }
+
+    private void setFavoriteButtonImage(boolean isFavorite) {
+        if (isFavorite) {
+            favoriteButton.setImageDrawable(
+                    ContextCompat.getDrawable(this,android.R.drawable.btn_star_big_on));
+        } else {
+            favoriteButton.setImageDrawable(
+                    ContextCompat.getDrawable(this,android.R.drawable.btn_star_big_off));
+        }
+    }
 }

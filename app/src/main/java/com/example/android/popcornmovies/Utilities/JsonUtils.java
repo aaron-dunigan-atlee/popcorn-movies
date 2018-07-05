@@ -21,7 +21,6 @@ public class JsonUtils {
             movie.setReleaseDate(movieJsonObj.getString("release_date"));
             movie.setSynopsis(movieJsonObj.getString("overview"));
             movie.setPosterUrl("http://image.tmdb.org/t/p/w185" + movieJsonObj.getString("poster_path"));
-
             return movie;
         } else {
             throw new JSONException("No JSON was retrieved. Check Internet connection.");

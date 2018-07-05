@@ -1,5 +1,6 @@
 package com.example.android.popcornmovies.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -14,13 +15,16 @@ import java.util.List;
 @Dao
 public interface FavoriteMovieDao {
     @Query("SELECT * FROM favorites")
-    List<Movie> loadFavoriteMovies();
+    LiveData<List<Movie>> loadFavoriteMovies();
+
+    @Query("SELECT * FROM favorites WHERE id = :movieId")
+    LiveData<Movie> loadMovieById(int movieId);
 
     @Insert
     void insertFavoriteMovie(Movie movie);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateFavoriteMoview(Movie movie);
+    void updateFavoriteMovie(Movie movie);
 
     @Delete
     void deleteFavoriteMovie(Movie movie);
