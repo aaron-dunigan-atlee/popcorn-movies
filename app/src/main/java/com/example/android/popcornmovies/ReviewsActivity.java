@@ -68,11 +68,16 @@ public class ReviewsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String queryResult) {
             super.onPostExecute(queryResult);
-            Log.d("Reviews query result:",queryResult);
             if (queryResult != null) {
                 reviewAdapter.setReviews(queryResult);
+                int reviewCount = reviewAdapter.getItemCount();
+                if (reviewCount == 0) {
+                    Toast.makeText(getApplicationContext(),
+                            "This movie has not been reviewed yet.", Toast.LENGTH_LONG)
+                            .show();
+                }
             } else {
-                Toast.makeText(getApplicationContext(),"Cannot show reviews",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Cannot show reviews.",Toast.LENGTH_LONG).show();
             }
         }
     }

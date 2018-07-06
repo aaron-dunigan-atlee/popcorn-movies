@@ -3,9 +3,11 @@ package com.example.android.popcornmovies.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 @Entity(tableName = "favorites")
-public class Movie {
+public class Movie implements Parcelable {
     // Use tmdb movie id as the database primary key.
     @PrimaryKey(autoGenerate = false)
     private int id;
@@ -68,4 +70,53 @@ public class Movie {
     }
     public void setVideoKey(String videoKey) {this.videoKey = videoKey; }
     public void setFavorite(boolean favorite) { isFavorite = favorite; }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeStringArray(new String[]{title, synopsis, releaseDate, posterUrl, videoKey});
+        dest.writeBooleanArray(new boolean[]{isFavorite});
+        dest.writeFloat(rating);
+    }
+
+    @Ignore
+    private Movie(Parcel in) {
+        this.id = in.readInt();
+        String[] fieldStrings = new String[5];
+        in.readStringArray(fieldStrings);
+        this.title = fieldStrings[0];
+        this.synopsis = fieldStrings[1];
+        this.releaseDate = fieldStrings[2];
+        this.posterUrl = fieldStrings[3];
+        this.videoKey = fieldStrings[4];
+        boolean[] isFavoriteArray = new boolean[1];
+        in.readBooleanArray(isFavoriteArray);
+        this.isFavorite = isFavoriteArray[0];
+        this.rating = in.readFloat();
+    }
+
+    // Boilerplate for the CREATOR constant.
+    // Taken from https://guides.codepath.com/android/using-parcelable
+    @Ignore
+    public static final Parcelable.Creator<Movie> CREATOR
+            = new Parcelable.Creator<Movie>() {
+
+        // This simply calls our new constructor (typically private) and
+        // passes along the unmarshalled `Parcel`, and then returns the new object!
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        // We just need to copy this and change the type to match our class.
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

@@ -10,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.android.popcornmovies.R;
+import com.example.android.popcornmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
+
+import java.util.List;
 
 /**
  * Created by Dunigan AtLee on 5/11/2018.
@@ -48,7 +51,7 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
 
     @NonNull
     @Override
-    public PosterGridAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PosterGridAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         int layoutIdForGridItem = R.layout.movie_poster_grid_item;
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -58,7 +61,7 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
     }
 
     @Override
-    public void onBindViewHolder(PosterGridAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PosterGridAdapterViewHolder holder, int position) {
         if (position < posterUrls.length) {
             if (posterUrls[position] != null) {
                 // Load poster image into posterImageView which was initialized in the ViewHolder constructor.
@@ -89,6 +92,7 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
 
     /* From the TMDB query JSON, extract poster URLs and display all posters in the grid. */
     public void setPosterUrls(String json) {
+        setItemCount(20);
         for (int i=0; i<itemCount; i++) {
             try {
                 String movieJson = JsonUtils.getMovieJson(json, i);
@@ -99,4 +103,14 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
         }
         notifyDataSetChanged();
     }
+
+    /* From the TMDB query JSON, extract poster URLs and display all posters in the grid. */
+    public void setPosterUrls(List<Movie> movies) {
+        setItemCount(movies.size());
+        for (int i=0; i<itemCount; i++) {
+            posterUrls[i] = movies.get(i).getPosterUrl();
+        }
+        notifyDataSetChanged();
+    }
+
 }

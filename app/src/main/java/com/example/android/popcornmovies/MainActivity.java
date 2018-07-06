@@ -1,24 +1,33 @@
 package com.example.android.popcornmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.android.popcornmovies.database.AppDatabase;
+import com.example.android.popcornmovies.model.Movie;
+import com.example.android.popcornmovies.utilities.JsonUtils;
 import com.example.android.popcornmovies.utilities.NetworkUtils;
 import com.example.android.popcornmovies.utilities.PosterGridAdapter;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 
 public class MainActivity
@@ -30,7 +39,7 @@ public class MainActivity
     private String mMovieQueryResult = null;
     private String sortOrder;
     private static String themoviedbApiKey;
-    private AppDatabase mDb;
+    private List<Movie> favoriteMovies;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,6 +64,7 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupPreferences();
+        setupViewModel();
         // Set up RecyclerView with a GridLayoutManager
         RecyclerView posterGridRecyclerView = (RecyclerView) findViewById(R.id.poster_grid_rv);
         posterGridLayoutManager = new GridLayoutManager(this, 3);
@@ -65,22 +75,30 @@ public class MainActivity
         // Reviewer or GitHub cloner: Add your API key in strings.xml with name themoviedb_api_key.
         themoviedbApiKey = getString(R.string.themoviedb_api_key);
         fetchMovies();
-        mDb = AppDatabase.getInstance(getApplicationContext());
+
     }
 
     private void fetchMovies() {
-        if (NetworkUtils.deviceIsConnected(this)) {
-            URL tmdbUrl = NetworkUtils.buildMovieQueryUrl(this, sortOrder, themoviedbApiKey);
-            MovieDbMovieQueryTask fetchMoviesTask = new MovieDbMovieQueryTask();
-            fetchMoviesTask.execute(tmdbUrl);
+        if (sortOrder.equals(getString(R.string.order_preference_favorite_value))) {
+            // Fetch movies by the viewModel.
+            if (favoriteMovies != null) {
+                gridAdapter.setPosterUrls(favoriteMovies);
+            }
         } else {
-            Toast.makeText(this, "No network connection", Toast.LENGTH_LONG).show();
+            // Fetch movies via API query.
+            if (NetworkUtils.deviceIsConnected(this)) {
+                URL tmdbUrl = NetworkUtils.buildMovieQueryUrl(this, sortOrder, themoviedbApiKey);
+                MovieDbMovieQueryTask fetchMoviesTask = new MovieDbMovieQueryTask();
+                fetchMoviesTask.execute(tmdbUrl);
+            } else {
+                Toast.makeText(this, "No network connection", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     @Override
     public void onItemClicked(int position) {
-        launchDetailActivity(position, mMovieQueryResult);
+        launchDetailActivity(position);
     }
 
     @Override
@@ -114,13 +132,26 @@ public class MainActivity
         }
     }
 
+    private void launchDetailActivity(int position) {
+        Movie movie;
+        if (sortOrder.equals(getString(R.string.order_preference_favorite_value))) {
+            movie = favoriteMovies.get(position);
+        } else {
+            try {
+                String movieJson = JsonUtils.getMovieJson(mMovieQueryResult, position);
+                movie = JsonUtils.parseMovieJson(movieJson);
 
-    private void launchDetailActivity(int position, String tmdb_query_json) {
-        // Create intent for detail activitiy.
-        Intent detailActivityIntent = new Intent(this,DetailActivity.class);
-        // Add position as an extra to the intent, so that we know which movie's details to get.
-        detailActivityIntent.putExtra(DetailActivity.EXTRA_POSITION, position);
-        detailActivityIntent.putExtra(DetailActivity.EXTRA_QUERY_JSON, tmdb_query_json);
+            } catch (JSONException e) {
+                Log.e("JSON error", e.toString());
+                Toast.makeText(this, "No details available.", Toast.LENGTH_LONG)
+                        .show();
+                return;
+            }
+        }
+        // Create intent for detail activity.
+        Intent detailActivityIntent = new Intent(this, DetailActivity.class);
+        // Since Movie is Parcelable, we can add it as an extra to the intent.
+        detailActivityIntent.putExtra(DetailActivity.EXTRA_MOVIE, movie);
         // Launch activity
         startActivity(detailActivityIntent);
     }
@@ -146,4 +177,17 @@ public class MainActivity
     public String getSortOrder() { return sortOrder; }
     public void setSortOrder(String sortOrder) { this.sortOrder = sortOrder; }
     public static String getThemoviedbApiKey() { return themoviedbApiKey; }
+
+    private void setupViewModel() {
+        FavoritesViewModel viewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
+        viewModel.getFavorites().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                favoriteMovies = movies;
+                if (sortOrder.equals(getString(R.string.order_preference_favorite_value))) {
+                    gridAdapter.setPosterUrls(movies);
+                }
+            }
+        });
+    }
 }

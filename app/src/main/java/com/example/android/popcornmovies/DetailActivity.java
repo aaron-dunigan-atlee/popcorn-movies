@@ -30,9 +30,7 @@ import java.net.URL;
 
 /* This Activity displays details for a specific movie. */
 public class DetailActivity extends AppCompatActivity {
-    public static final String EXTRA_POSITION = "extra_position";
-    private static final int DEFAULT_POSITION = -1;
-    public static final String EXTRA_QUERY_JSON = "extra_query_json";
+    public static final String EXTRA_MOVIE = "extra_movie";
     private TextView mTitleTextView, mSynopsisTextView, mRatingTextView, mReleaseDateTextView;
     private ImageView mPosterImageView;
     private Movie mMovie;
@@ -44,23 +42,16 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        // Get Movie object as Parcelable intent extra.
         Intent intent = getIntent();
-        int position = intent.getIntExtra(EXTRA_POSITION, DEFAULT_POSITION);
-        String queryResult = intent.getStringExtra(EXTRA_QUERY_JSON);
+        mMovie = (Movie) intent.getParcelableExtra(EXTRA_MOVIE);
         favoritesDb = AppDatabase.getInstance(getApplicationContext());
-
-        try {
-            String movieJson = JsonUtils.getMovieJson(queryResult, position);
-            mMovie = JsonUtils.parseMovieJson(movieJson);
-            setTitle(mMovie.getTitle());
-            mPosterImageView = findViewById(R.id.detail_poster_iv);
-            Picasso.with(this)
-                    .load(mMovie.getPosterUrl())
-                    .into(mPosterImageView);
-            populateUI(mMovie);
-        } catch(JSONException e) {
-            Log.e("JSON error",e.toString());
-        }
+        setTitle(mMovie.getTitle());
+        mPosterImageView = findViewById(R.id.detail_poster_iv);
+        Picasso.with(this)
+                .load(mMovie.getPosterUrl())
+                .into(mPosterImageView);
+        populateUI(mMovie);
         final ImageButton trailerButton = findViewById(R.id.play_trailer_button);
         trailerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -80,19 +71,17 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
         setupViewModel();
-
-
     }
 
     private void playTrailer() {
-        if (NetworkUtils.deviceIsConnected(this)) {
+        if (NetworkUtils.deviceIsConnected(getApplicationContext())) {
             URL tmdbUrl = NetworkUtils.buildTrailerQueryUrl(this, mMovie.getId(),
                     MainActivity.getThemoviedbApiKey());
             Log.d("Query URL",tmdbUrl.toString());
             MovieDbTrailerQueryTask fetchTrailersTask = new MovieDbTrailerQueryTask();
             fetchTrailersTask.execute(tmdbUrl);
         } else {
-            Toast.makeText(this, "No network connection", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "No network connection", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -109,7 +98,9 @@ public class DetailActivity extends AppCompatActivity {
         mReleaseDateTextView.setText(movie.getReleaseDate());
 
     }
-
+    // AsyncTask for querying The Movie DB for videos (trailers, etc.) associated with a movie.
+    // After querying, launch the first video in an implicit intent (will open in youtube app
+    // if available, or in browser or other appropriate app).
     public class MovieDbTrailerQueryTask extends AsyncTask<URL, Void, String> {
         @Override
         protected String doInBackground(URL... urls) {
@@ -124,20 +115,25 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String queryResult) {
             super.onPostExecute(queryResult);
-            Log.d("Trailer query result",queryResult);
+            Toast noTrailerToast = Toast.makeText(getApplicationContext(),
+                    "Cannot play trailer",Toast.LENGTH_LONG);
             if (queryResult != null) {
+                Log.d("Trailer query result",queryResult);
                 try {
                     movieTrailerYoutubeKey = JsonUtils.getTrailerYoutubeKey(queryResult);
                 } catch (JSONException e) {
                     Log.e("JSON error", e.toString());
                 }
+            } else {
+                noTrailerToast.show();
+                return;
             }
             if (movieTrailerYoutubeKey != null) {
                 Uri youtubeUri = NetworkUtils.buildYoutubeUri(movieTrailerYoutubeKey);
                 Log.d("YoutubeURI",youtubeUri.toString());
                 startActivity(new Intent(Intent.ACTION_VIEW, youtubeUri));
             } else {
-                Toast.makeText(getApplicationContext(),"Cannot play trailer",Toast.LENGTH_LONG).show();
+                noTrailerToast.show();
             }
         }
     }
