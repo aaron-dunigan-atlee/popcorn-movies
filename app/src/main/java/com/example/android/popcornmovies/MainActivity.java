@@ -17,11 +17,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.android.popcornmovies.database.AppDatabase;
 import com.example.android.popcornmovies.model.Movie;
-import com.example.android.popcornmovies.utilities.JsonUtils;
-import com.example.android.popcornmovies.utilities.NetworkUtils;
-import com.example.android.popcornmovies.utilities.PosterGridAdapter;
+import com.example.android.popcornmovies.utils.JsonUtils;
+import com.example.android.popcornmovies.utils.NetworkUtils;
+import com.example.android.popcornmovies.utils.PosterGridAdapter;
 
 import org.json.JSONException;
 

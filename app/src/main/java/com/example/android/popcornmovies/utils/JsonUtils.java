@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies.utilities;
+package com.example.android.popcornmovies.utils;
 
 import com.example.android.popcornmovies.model.Movie;
 

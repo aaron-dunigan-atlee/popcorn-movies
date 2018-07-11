@@ -2,7 +2,7 @@ package com.example.android.popcornmovies.model;
 
 import android.util.Log;
 
-import com.example.android.popcornmovies.utilities.JsonUtils;
+import com.example.android.popcornmovies.utils.JsonUtils;
 
 import org.json.JSONException;
 

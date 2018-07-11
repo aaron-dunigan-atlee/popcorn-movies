@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies.utilities;
+package com.example.android.popcornmovies.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Scanner;
 

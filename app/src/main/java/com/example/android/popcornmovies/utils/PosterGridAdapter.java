@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies.utilities;
+package com.example.android.popcornmovies.utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -93,6 +93,7 @@ public class PosterGridAdapter extends RecyclerView.Adapter<PosterGridAdapter.Po
     /* From the TMDB query JSON, extract poster URLs and display all posters in the grid. */
     public void setPosterUrls(String json) {
         setItemCount(20);
+        posterUrls = new String[getItemCount()];
         for (int i=0; i<itemCount; i++) {
             try {
                 String movieJson = JsonUtils.getMovieJson(json, i);

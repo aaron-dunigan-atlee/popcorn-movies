@@ -1,7 +1,6 @@
 package com.example.android.popcornmovies;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,11 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.android.popcornmovies.utilities.JsonUtils;
-import com.example.android.popcornmovies.utilities.NetworkUtils;
-import com.example.android.popcornmovies.utilities.ReviewAdapter;
-
-import org.json.JSONException;
+import com.example.android.popcornmovies.utils.NetworkUtils;
+import com.example.android.popcornmovies.utils.ReviewAdapter;
 
 import java.io.IOException;
 import java.net.URL;
