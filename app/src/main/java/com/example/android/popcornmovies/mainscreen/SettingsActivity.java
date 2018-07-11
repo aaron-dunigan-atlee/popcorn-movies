@@ -1,7 +1,9 @@
-package com.example.android.popcornmovies;
+package com.example.android.popcornmovies.mainscreen;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.android.popcornmovies.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

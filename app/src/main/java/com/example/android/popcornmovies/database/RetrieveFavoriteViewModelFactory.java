@@ -1,9 +1,7 @@
-package com.example.android.popcornmovies;
+package com.example.android.popcornmovies.database;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-
-import com.example.android.popcornmovies.database.AppDatabase;
 
 /* ViewModelFactory for retrieving a single favorite from the favorites database.
  * Modeled after Exercise T09b.10.*/

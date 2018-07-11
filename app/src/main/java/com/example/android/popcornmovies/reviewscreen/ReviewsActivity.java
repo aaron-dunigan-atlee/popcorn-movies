@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies;
+package com.example.android.popcornmovies.reviewscreen;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -9,8 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.android.popcornmovies.R;
+import com.example.android.popcornmovies.mainscreen.MainActivity;
 import com.example.android.popcornmovies.utils.NetworkUtils;
-import com.example.android.popcornmovies.utils.ReviewAdapter;
 
 import java.io.IOException;
 import java.net.URL;

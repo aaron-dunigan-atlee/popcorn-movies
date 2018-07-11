@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies.utils;
+package com.example.android.popcornmovies.mainscreen;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.example.android.popcornmovies.R;
 import com.example.android.popcornmovies.model.Movie;
+import com.example.android.popcornmovies.utils.JsonUtils;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;

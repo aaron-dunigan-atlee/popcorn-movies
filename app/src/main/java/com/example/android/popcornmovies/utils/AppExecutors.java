@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies;
+package com.example.android.popcornmovies.utils;
 // This class copied directly from Exercise T09b.10.
 /*
  * Copyright (C) 2017 The Android Open Source Project

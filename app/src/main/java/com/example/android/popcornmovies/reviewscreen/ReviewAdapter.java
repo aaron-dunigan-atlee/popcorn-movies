@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies.utils;
+package com.example.android.popcornmovies.reviewscreen;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.android.popcornmovies.R;
 import com.example.android.popcornmovies.model.MovieReview;
+import com.example.android.popcornmovies.utils.JsonUtils;
 
 import org.json.JSONException;
 

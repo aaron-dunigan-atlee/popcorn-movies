@@ -1,4 +1,4 @@
-package com.example.android.popcornmovies;
+package com.example.android.popcornmovies.database;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
